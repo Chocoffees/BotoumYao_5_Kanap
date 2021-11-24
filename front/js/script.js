@@ -8,8 +8,7 @@ fetch('http://localhost:3000/api/products')
         }
     })
 
-//
-
+//Insert each product details on homepage
     .then(productList => {
         console.log(productList);
         for (let product of productList) {
