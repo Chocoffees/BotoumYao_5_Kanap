@@ -11,19 +11,32 @@ console.log(params);
 const ID = params.get("id");
 console.log(ID); // 12345
 
+getOneProduct();
 
-// Get product data from API using id
-fetch(`http://localhost:3000/api/products/${ID}`)
-    .then(response => {
-        if (response.ok) {
-            return response.json()
-        }
-    })
-    .then(productData => {
-        console.log(productData);
+function getOneProduct() {
+    // Get product data from API using id
+    fetch(`http://localhost:3000/api/products/${ID}`)
+        .then((response) => response.json())
+        .then(
+            (productData) => {
+                console.log(productData);
 
-        document.getElementsByClassName("item__img").innerHTML = `<img src="${productData.imageUrl}" alt=${productData.altTxt}>`;
-        document.getElementById("title").innerHTML = `"${productData.name}"`;
-        document.getElementById("price").innerHTML = `"${productData.price}"`;
-        document.getElementById("description").innerHTML = `"${productData.description}"`;
-    })
+                // Insert data in DOM
+                // -- Product image --
+                var img = document.createElement("img");
+                img.src = `${productData.imageUrl}`;
+                img.alt = `${productData.altTxt}`;
+                document.querySelector(".item__img").appendChild(img);
+                console.log(img);
+
+                // -- Product name --
+                document.getElementById("title").innerHTML = `"${productData.name}"`;
+
+                // -- Product price --
+                document.getElementById("price").innerHTML = `"${productData.price}"`;
+
+                // -- Product description --
+                document.getElementById("description").innerHTML = `"${productData.description}"`;
+            }
+        )
+}
