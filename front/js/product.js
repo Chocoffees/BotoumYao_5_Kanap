@@ -30,13 +30,28 @@ function getOneProduct() {
                 console.log(img);
 
                 // -- Product name --
-                document.getElementById("title").innerHTML = `"${productData.name}"`;
+                document.getElementById("title").innerHTML = `${productData.name}`;
 
                 // -- Product price --
-                document.getElementById("price").innerHTML = `"${productData.price}"`;
+                document.getElementById("price").innerHTML = `${productData.price}`;
 
                 // -- Product description --
-                document.getElementById("description").innerHTML = `"${productData.description}"`;
-            }
-        )
+                document.getElementById("description").innerHTML = `${productData.description}`;
+
+                // -- Product colors --
+                // -- Customization option --
+                let selection = document.getElementById("colors");
+                console.log(selection);
+                let colorList = productData.colors;
+                console.log(colorList);
+
+                colorList.forEach((colors) => {
+                    let settingColor = document.createElement("option");
+                    settingColor.textContent = `${colors}`;
+                    settingColor.value = `${colors}`;
+                    selection.appendChild(settingColor);
+                    console.log(settingColor);
+                })
+            })
+
 }
