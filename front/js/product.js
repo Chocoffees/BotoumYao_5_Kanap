@@ -13,45 +13,46 @@ console.log(ID); // 12345
 
 getOneProduct();
 
-function getOneProduct() {
+async function getOneProduct() {
     // Get product data from API using id
-    fetch(`http://localhost:3000/api/products/${ID}`)
-        .then((response) => response.json())
-        .then(
-            (productData) => {
-                console.log(productData);
+    await fetch(`http://localhost:3000/api/products/${ID}`)
+        .then(function (response) {
+            return response.json()
+        })
+        .then(function (productData) {
+            console.log(productData);
 
-                // Insert data in DOM
-                // -- Product image --
-                var img = document.createElement("img");
-                img.src = `${productData.imageUrl}`;
-                img.alt = `${productData.altTxt}`;
-                document.querySelector(".item__img").appendChild(img);
-                console.log(img);
+            // Insert data in DOM
+            // -- Product image --
+            var img = document.createElement("img");
+            img.src = `${productData.imageUrl}`;
+            img.alt = `${productData.altTxt}`;
+            document.querySelector(".item__img").appendChild(img);
+            console.log(img);
 
-                // -- Product name --
-                document.getElementById("title").innerHTML = `${productData.name}`;
+            // -- Product name --
+            document.getElementById("title").innerHTML = `${productData.name}`;
 
-                // -- Product price --
-                document.getElementById("price").innerHTML = `${productData.price}`;
+            // -- Product price --
+            document.getElementById("price").innerHTML = `${productData.price}`;
 
-                // -- Product description --
-                document.getElementById("description").innerHTML = `${productData.description}`;
+            // -- Product description --
+            document.getElementById("description").innerHTML = `${productData.description}`;
 
-                // -- Product colors --
-                // -- Customization option --
-                let selection = document.getElementById("colors");
-                console.log(selection);
-                let colorList = productData.colors;
-                console.log(colorList);
+            // -- Product colors --
+            // -- Customization option --
+            let selection = document.getElementById("colors");
+            console.log(selection);
+            let colorList = productData.colors;
+            console.log(colorList);
 
-                colorList.forEach((colors) => {
-                    let settingColor = document.createElement("option");
-                    settingColor.textContent = `${colors}`;
-                    settingColor.value = `${colors}`;
-                    selection.appendChild(settingColor);
-                    console.log(settingColor);
-                })
+            colorList.forEach((colors) => {
+                let settingColor = document.createElement("option");
+                settingColor.textContent = `${colors}`;
+                settingColor.value = `${colors}`;
+                selection.appendChild(settingColor);
+                console.log(settingColor);
             })
+        })
 
 }
