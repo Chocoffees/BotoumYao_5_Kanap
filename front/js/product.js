@@ -56,3 +56,35 @@ async function getOneProduct() {
         })
 
 }
+
+
+// --- Add clicked product(s) to cart ---
+// cart = [] > contain product-ID + quantity + color
+
+startShopping();
+function startShopping() {
+    var addToCartButton = document.getElementById("addToCart");
+    addToCartButton.addEventListener('click', addProductToCart)
+}
+
+addProductToCart();
+function addProductToCart() {
+    var productAdded = {
+        "_id": ID,
+        "quantity": document.getElementById("quantity").value,
+        "color": document.getElementById("colors").value
+    };
+    console.log(productAdded);
+
+    // --- Storage -> Allow access to cart ---
+    // onclick -> add each product(s) to local storage (cart)
+
+    let productStored = JSON.parse(localStorage.getItem("productStored")) || []
+
+    productStored.push(productAdded)
+    localStorage.setItem("productStored", JSON.stringify(productStored))
+    console.log(productStored);
+
+}
+
+
