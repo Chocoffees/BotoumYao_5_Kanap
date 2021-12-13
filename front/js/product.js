@@ -2,11 +2,11 @@
 
 // Get the query string
 const queryStringId = window.location.search;
-console.log(queryStringId); // ?id=12345
+//console.log(queryStringId); // ?id=12345
 
 // Get param value (id)
 const params = new URLSearchParams(queryStringId);
-console.log(params);
+//console.log(params);
 
 const ID = params.get("id");
 console.log(ID); // 12345
@@ -28,7 +28,7 @@ async function getOneProduct() {
             img.src = `${productData.imageUrl}`;
             img.alt = `${productData.altTxt}`;
             document.querySelector(".item__img").appendChild(img);
-            console.log(img);
+            //console.log(img);
 
             // -- Product name --
             document.getElementById("title").innerHTML = `${productData.name}`;
@@ -42,9 +42,9 @@ async function getOneProduct() {
             // -- Product colors --
             // -- Customization option --
             let selection = document.getElementById("colors");
-            console.log(selection);
+            //console.log(selection);
             let colorList = productData.colors;
-            console.log(colorList);
+            //console.log(colorList);
 
             colorList.forEach((colors) => {
                 let settingColor = document.createElement("option");
@@ -67,7 +67,7 @@ function startShopping() {
     addToCartButton.addEventListener('click', addProductToCart)
 }
 
-addProductToCart();
+//addProductToCart(); function called twice: generated error in localStorage -> deleted
 function addProductToCart() {
     var productAdded = {
         "_id": ID,
@@ -79,12 +79,14 @@ function addProductToCart() {
     // --- Storage -> Allow access to cart ---
     // onclick -> add each product(s) to local storage (cart)
 
-    let productStored = JSON.parse(localStorage.getItem("productStored")) || []
+    let productStored = JSON.parse(localStorage.getItem("productStored")) || [];
 
-    productStored.push(productAdded)
-    localStorage.setItem("productStored", JSON.stringify(productStored))
+    // check product registration before adding
+    if (localStorage.getItem("productAdded") == null) {
+        productStored.push(productAdded)
+    }
+
+    localStorage.setItem("productStored", JSON.stringify(productStored));
     console.log(productStored);
 
 }
-
-
