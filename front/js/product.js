@@ -74,7 +74,7 @@ function addProductToCart() {
         "quantity": document.getElementById("quantity").value,
         "color": document.getElementById("colors").value
     };
-    console.log(productAdded);
+    //console.log(productAdded);
 
     // --- Storage -> Allow access to cart ---
     // onclick -> add each product(s) to local storage (cart)
@@ -83,10 +83,17 @@ function addProductToCart() {
 
     // check product registration before adding
     if (localStorage.getItem("productAdded") == null) {
-        productStored.push(productAdded)
+
+        // check duplicate product(s) (cart) -> adjust quantity
+        let duplicateProduct = productStored.find(product => (product._id === ID && product.color === document.getElementById("colors").value));
+
+        if (duplicateProduct !== undefined) {
+            duplicateProduct.quantity++;
+        } else {
+            productStored.push(productAdded);
+        }
+        localStorage.setItem("productStored", JSON.stringify(productStored));
+        console.log(productStored);
+
     }
-
-    localStorage.setItem("productStored", JSON.stringify(productStored));
-    console.log(productStored);
-
 }
