@@ -59,7 +59,8 @@ async function getOneProduct() {
 
 
 // --- Add clicked product(s) to cart ---
-// cart = [] > contain product-ID + quantity + color
+/* cart = [] > contain product-ID + quantity + color
+   onclick -> add each product(s) to local storage (cart) */
 
 startShopping();
 function startShopping() {
@@ -67,33 +68,28 @@ function startShopping() {
     addToCartButton.addEventListener('click', addProductToCart)
 }
 
-//addProductToCart(); function called twice: generated error in localStorage -> deleted
 function addProductToCart() {
     var productAdded = {
         "_id": ID,
         "quantity": document.getElementById("quantity").value,
         "color": document.getElementById("colors").value
     };
-    //console.log(productAdded);
 
     // --- Storage -> Allow access to cart ---
-    // onclick -> add each product(s) to local storage (cart)
 
     let productStored = JSON.parse(localStorage.getItem("productStored")) || [];
 
-    // check product registration before adding
-    if (localStorage.getItem("productAdded") == null) {
+    // check duplicate product(s): same id & color (cart) -> adjust quantity
+    let duplicateProduct = productStored.find(product => (product._id === ID && product.color === document.getElementById("colors").value));
 
-        // check duplicate product(s) (cart) -> adjust quantity
-        let duplicateProduct = productStored.find(product => (product._id === ID && product.color === document.getElementById("colors").value));
-
-        if (duplicateProduct !== undefined) {
-            duplicateProduct.quantity++;
-        } else {
-            productStored.push(productAdded);
-        }
-        localStorage.setItem("productStored", JSON.stringify(productStored));
-        console.log(productStored);
-
+    if (duplicateProduct !== undefined) {
+        duplicateProduct.quantity++;
+    } else {
+        productStored.push(productAdded);
     }
+
+    // save user selection
+    localStorage.setItem("productStored", JSON.stringify(productStored));
+    console.log(productStored);
+
 }
