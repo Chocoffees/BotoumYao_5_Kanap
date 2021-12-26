@@ -26,32 +26,37 @@ async function getOneProduct() {
             // -- Product image --
             var img = document.createElement("img");
             img.src = `${productData.imageUrl}`;
-            img.alt = `${productData.altTxt}`;
+            productImageUrl = document.querySelector(".item__img").value = img.src;
+            console.log(productImageUrl);
+            img.alt = `${productData.altTxt}, ${productData.name}`;
+            productImageAlt = document.querySelector("img").innerText = img.alt;
+            console.log(productImageAlt);
             document.querySelector(".item__img").appendChild(img);
-            //console.log(img);
+            console.log(img);
 
             // -- Product name --
-            document.getElementById("title").innerHTML = `${productData.name}`;
+            let title = document.getElementById("title");
+            productName = title.innerText = `${productData.name}`;
 
             // -- Product price --
-            document.getElementById("price").innerHTML = `${productData.price}`;
+            let price = document.getElementById("price");
+            productPrice = price.innerHTML = `${productData.price}`;
 
             // -- Product description --
-            document.getElementById("description").innerHTML = `${productData.description}`;
+            let description = document.getElementById("description");
+            productDescription = description.innerHTML = `${productData.description}`;
 
             // -- Product colors --
             // -- Customization option --
             let selection = document.getElementById("colors");
-            //console.log(selection);
             let colorList = productData.colors;
-            //console.log(colorList);
 
             colorList.forEach((colors) => {
                 let settingColor = document.createElement("option");
                 settingColor.textContent = `${colors}`;
                 settingColor.value = `${colors}`;
                 selection.appendChild(settingColor);
-                console.log(settingColor);
+                //console.log(settingColor);
             })
         })
 
@@ -72,8 +77,14 @@ function addProductToCart() {
     var productAdded = {
         "_id": ID,
         "quantity": document.getElementById("quantity").value,
-        "color": document.getElementById("colors").value
+        "color": document.getElementById("colors").value,
+        "imageUrl": productImageUrl,
+        "altTxt": productImageAlt,
+        "name": productName,
+        "description": productDescription,
+        "price": productPrice
     };
+    console.log(productAdded);
 
     // --- Storage -> Allow access to cart ---
 
