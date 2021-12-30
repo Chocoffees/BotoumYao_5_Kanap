@@ -86,6 +86,7 @@ function getCustomerSelection() {
     }
   }
   updateTotalArticles();
+  updateTotalAmount();
 }
 
 // Manage total quantity of products at shopping cart opening -> with or without product previously selected
@@ -103,5 +104,23 @@ function updateTotalArticles() {
       numberOfArticles.textContent = globalQuantity
     }
     console.log(`${globalQuantity} articles`);
+  }
+}
+
+// Manage total amount of shopping cart -> with or without product previously selected
+function updateTotalAmount() {
+  let cartContent = JSON.parse(localStorage.getItem("productStored"));
+  let amount = document.getElementById("totalPrice");
+  let globalAmount = 0;
+
+  if (cartContent === null) {
+    amount.textContent = 0;
+    console.log(amount);
+  } else {
+    for (let i = 0; i < cartContent.length; i += 1) {
+      globalAmount += + (cartContent[i].price) * (cartContent[i].quantity); //take into account quantities from localstorage
+      amount.textContent = globalAmount
+    }
+    console.log(globalAmount);
   }
 }
