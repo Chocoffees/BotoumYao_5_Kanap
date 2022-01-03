@@ -1,12 +1,13 @@
 // --- Shopping cart -> Display all previously selected products ---
 cartContent = [];
+var cartContent = JSON.parse(localStorage.getItem("productStored"));
 
 // Get array with products from localStorage
 document.body.onload = getCustomerSelection();
 
 function getCustomerSelection() {
   if (localStorage.getItem("productStored") !== null) {
-    let cartContent = JSON.parse(localStorage.getItem("productStored"));
+    cartContent;
     console.log(cartContent);
 
     // Build the cart: create, insert elements for each product
@@ -18,7 +19,7 @@ function getCustomerSelection() {
       let article = document.createElement("article");
       resumItems.appendChild(article);
       article.className = "cart__item";
-      console.log(article);
+      //console.log(article);
       article.dataset.id = `${productStored._id}`;
       resumItems.appendChild(article);
 
@@ -87,11 +88,12 @@ function getCustomerSelection() {
   }
   updateTotalArticles();
   updateTotalAmount();
+  modifyQuantity();
 }
 
 // Manage total quantity of products at shopping cart opening -> with or without product previously selected
 function updateTotalArticles() {
-  let cartContent = JSON.parse(localStorage.getItem("productStored"));
+  cartContent;
   let numberOfArticles = document.getElementById("totalQuantity");
   let globalQuantity = 0;
 
@@ -109,7 +111,7 @@ function updateTotalArticles() {
 
 // Manage total amount of shopping cart -> with or without product previously selected
 function updateTotalAmount() {
-  let cartContent = JSON.parse(localStorage.getItem("productStored"));
+  cartContent;
   let amount = document.getElementById("totalPrice");
   let globalAmount = 0;
 
@@ -123,4 +125,70 @@ function updateTotalAmount() {
     }
     console.log(globalAmount);
   }
+}
+
+// Manage possibility to modify product quantity (input max: 100)
+let selectQuantity = document.querySelectorAll(".itemQuantity");
+
+for (let i = 0; i < selectQuantity.length; i++) {
+  selectQuantity[i].addEventListener("change", modifyQuantity);
+}
+
+function modifyQuantity() {
+  cartContent;
+  let selectQuantity = document.querySelectorAll(".itemQuantity");
+  let newQuantity = this.value; //new quantity choosen
+
+  for (let i = 0; i < selectQuantity.length; i++) {
+    newQuantity < 100;
+    if (newQuantity > 100) {
+      alert("ℹ️ Cher Client, la quantité choisie pour chaque article ne peut excéder 100. Choisissez une nouvelle quantité.");
+    }
+  }
+
+  /* -- Refresh localstorage --
+  ***** Search to match product id & color *****
+  *********** > Update quantity **********/
+
+  var newProductStored = JSON.parse(localStorage.productStored);
+
+  for (let i = 0; i < newProductStored.length; i += 1) {
+    if (cartContent[i]._id == newProductStored[i]._id && cartContent[i].color == newProductStored[i].color && newQuantity < 100) {
+      console.log(newProductStored[i]._id);
+      console.log(cartContent[i]._id);
+      console.log(newProductStored[i].color);
+      console.log(cartContent[i].color);
+      newProductStored[i].quantity = newQuantity; //quantity now updated
+      break;
+    }
+  }
+  localStorage.setItem("newProductStored", JSON.stringify(newProductStored)); //restore product of which quantity changed
+  console.log(newProductStored);
+  updateTotalArticlesAfterChange();
+  updateTotalAmountAfterChange();
+}
+
+// Update total articles and total amount after quantity modification
+function updateTotalArticlesAfterChange() {
+  newProductStored = JSON.parse(localStorage.getItem("newProductStored"));
+  let numberOfArticles = document.getElementById("totalQuantity");
+  let globalQuantity = 0;
+
+  for (let i = 0; i < newProductStored.length; i++) {
+    globalQuantity += Number(newProductStored[i].quantity);
+    numberOfArticles.textContent = globalQuantity;
+  }
+  console.log(`${globalQuantity} articles`);
+  localStorage.setItem("newProductStored", JSON.stringify(newProductStored));
+}
+
+function updateTotalAmountAfterChange() {
+  let amount = document.getElementById("totalPrice");
+  let globalAmount = 0;
+
+  for (let i = 0; i < newProductStored.length; i += 1) {
+    globalAmount += + (newProductStored[i].price) * (newProductStored[i].quantity); //take into account quantities from localstorage
+    amount.textContent = globalAmount
+  }
+  console.log(globalAmount);
 }
