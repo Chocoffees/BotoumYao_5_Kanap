@@ -98,6 +98,7 @@ function addProductToCart() {
     } else {
         productStored.push(productAdded);
     }
+
     // save user selection
     localStorage.setItem("productStored", JSON.stringify(productStored));
     console.log(productStored);
