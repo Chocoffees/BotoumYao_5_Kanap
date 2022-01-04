@@ -84,14 +84,32 @@ function getCustomerSelection() {
       deleteButton.className = "deleteItem";
       deleteButton.innerText = "Supprimer";
       setDelete.appendChild(deleteButton);
+
+      /* 
+      Check product(s) in cart with same id & different color. 
+      Product must appear in 2 different lines. 
+      Indicate color and quantity for each.
+      */
+      let productWithSameId = cartContent.find(product => (product._id === `${productStored._id}` && product.color !== `${productStored.color}`));
+      console.log(productWithSameId);
+      if (productWithSameId !== undefined) {
+        let color = document.createElement("p");
+        color.innerText = "Couleur :" + " " + productWithSameId.color;
+        color.style.fontSize = "medium";
+        title.appendChild(color);
+      }
     }
   }
   updateTotalArticles();
   updateTotalAmount();
   modifyQuantity();
+  deleteProduct();
 }
 
-// Manage total quantity of products at shopping cart opening -> with or without product previously selected
+/* 
+Manage total quantity of products at shopping cart opening.
+With or without product previously selected
+*/
 function updateTotalArticles() {
   cartContent;
   let numberOfArticles = document.getElementById("totalQuantity");
@@ -109,7 +127,10 @@ function updateTotalArticles() {
   }
 }
 
-// Manage total amount of shopping cart -> with or without product previously selected
+/*
+Manage total amount of shopping cart.
+With or without product previously selected
+*/
 function updateTotalAmount() {
   cartContent;
   let amount = document.getElementById("totalPrice");
@@ -127,7 +148,10 @@ function updateTotalAmount() {
   }
 }
 
-// Manage possibility to modify product quantity (input max: 100)
+/*
+Manage possibility to modify product quantity.
+Input max: 100
+*/
 let selectQuantity = document.querySelectorAll(".itemQuantity");
 
 for (let i = 0; i < selectQuantity.length; i++) {
@@ -146,18 +170,20 @@ function modifyQuantity() {
     }
   }
 
-  /* -- Refresh localstorage --
-  ***** Search to match product id & color *****
-  *********** > Update quantity **********/
+  /*
+    -- Refresh localstorage --
+  Search to match product id & color
+          Update quantity
+  */
 
   var newProductStored = JSON.parse(localStorage.productStored);
 
   for (let i = 0; i < newProductStored.length; i += 1) {
     if (cartContent[i]._id == newProductStored[i]._id && cartContent[i].color == newProductStored[i].color && newQuantity < 100) {
-      console.log(newProductStored[i]._id);
-      console.log(cartContent[i]._id);
-      console.log(newProductStored[i].color);
-      console.log(cartContent[i].color);
+      //console.log(newProductStored[i]._id);
+      //console.log(cartContent[i]._id);
+      //console.log(newProductStored[i].color);
+      //console.log(cartContent[i].color);
       newProductStored[i].quantity = newQuantity; //quantity now updated
       break;
     }
@@ -191,4 +217,17 @@ function updateTotalAmountAfterChange() {
     amount.textContent = globalAmount
   }
   console.log(globalAmount);
+}
+
+function deleteProduct(id, color) {
+  newProductStored = JSON.parse(localStorage.getItem("newProductStored"));
+  const productToDelete = document.querySelectorAll(".deleteItem");
+  console.log(productToDelete);
+
+  for (let i = 0; i < productToDelete.length; i++) {
+    productToDelete[i].addEventListener("click", function () {
+      alert("🗑️ Voulez-vous supprimer ce produit ?");
+    }
+    )
+  }
 }
