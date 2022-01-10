@@ -106,6 +106,7 @@ function getCustomerSelection() {
   deleteProduct();
 }
 
+
 /* 
 Manage total quantity of products at shopping cart opening.
 With or without product previously selected
@@ -121,11 +122,12 @@ function updateTotalArticles() {
   } else {
     for (let i = 0; i < cartContent.length; i += 1) {
       globalQuantity += Number(cartContent[i].quantity); //convert the value to a number
-      numberOfArticles.textContent = globalQuantity
+      numberOfArticles.textContent = globalQuantity;
     }
     console.log(`${globalQuantity} articles`);
   }
 }
+
 
 /*
 Manage total amount of shopping cart.
@@ -142,11 +144,12 @@ function updateTotalAmount() {
   } else {
     for (let i = 0; i < cartContent.length; i += 1) {
       globalAmount += + (cartContent[i].price) * (cartContent[i].quantity); //take into account quantities from localstorage
-      amount.textContent = globalAmount
+      amount.textContent = globalAmount;
     }
     console.log(globalAmount);
   }
 }
+
 
 /*
 Manage possibility to modify product quantity.
@@ -154,7 +157,7 @@ Input max: 100
 */
 let selectQuantity = document.querySelectorAll(".itemQuantity");
 
-for (let i = 0; i < selectQuantity.length; i++) {
+for (let i = 0; i < selectQuantity.length; i += 1) {
   selectQuantity[i].addEventListener("change", modifyQuantity);
 }
 
@@ -162,12 +165,11 @@ function modifyQuantity() {
   cartContent;
   let selectQuantity = document.querySelectorAll(".itemQuantity");
   let newQuantity = this.value; //new quantity choosen
+  console.log(newQuantity);
 
-  for (let i = 0; i < selectQuantity.length; i++) {
-    newQuantity < 100;
-    if (newQuantity > 100) {
-      alert("ℹ️ Cher Client, la quantité choisie pour chaque article ne peut excéder 100. Choisissez une nouvelle quantité.");
-    }
+  newQuantity < 100;
+  if (newQuantity > 100) {
+    alert("ℹ️ Cher Client, la quantité choisie pour chaque article ne peut excéder 100. Choisissez une nouvelle quantité.");
   }
 
   /*
@@ -176,23 +178,18 @@ function modifyQuantity() {
           Update quantity
   */
 
-  var newProductStored = JSON.parse(localStorage.productStored);
-
-  for (let i = 0; i < newProductStored.length; i += 1) {
-    if (cartContent[i]._id == newProductStored[i]._id && cartContent[i].color == newProductStored[i].color && newQuantity < 100) {
-      //console.log(newProductStored[i]._id);
-      //console.log(cartContent[i]._id);
-      //console.log(newProductStored[i].color);
-      //console.log(cartContent[i].color);
-      newProductStored[i].quantity = newQuantity; //quantity now updated
-      break;
-    }
-  }
-  localStorage.setItem("newProductStored", JSON.stringify(newProductStored)); //restore product of which quantity changed
+  newProductStored = JSON.parse(localStorage.productStored);
   console.log(newProductStored);
-  updateTotalArticlesAfterChange();
-  updateTotalAmountAfterChange();
+  for (let i = 0; i < selectQuantity.length; i++) {
+    if (cartContent[i]._id == newProductStored[i]._id && cartContent[i].color == newProductStored[i].color && newQuantity < 100) {
+      newProductStored[i].quantity = selectQuantity[i].value; //quantity now updated
+    }
+    localStorage.setItem("newProductStored", JSON.stringify(newProductStored)); //restore product of which quantity changed
+    updateTotalArticlesAfterChange();
+    updateTotalAmountAfterChange();
+  }
 }
+
 
 // Update total articles and total amount after quantity modification
 function updateTotalArticlesAfterChange() {
@@ -208,26 +205,115 @@ function updateTotalArticlesAfterChange() {
   localStorage.setItem("newProductStored", JSON.stringify(newProductStored));
 }
 
+
 function updateTotalAmountAfterChange() {
   let amount = document.getElementById("totalPrice");
   let globalAmount = 0;
 
   for (let i = 0; i < newProductStored.length; i += 1) {
     globalAmount += + (newProductStored[i].price) * (newProductStored[i].quantity); //take into account quantities from localstorage
-    amount.textContent = globalAmount
+    amount.textContent = globalAmount;
   }
   console.log(globalAmount);
 }
 
-function deleteProduct(id, color) {
-  newProductStored = JSON.parse(localStorage.getItem("newProductStored"));
+
+/*
+Manage possibility to delete product.
+        -- Refresh cart --
+*/
+function deleteProduct() {
   const productToDelete = document.querySelectorAll(".deleteItem");
-  console.log(productToDelete);
 
   for (let i = 0; i < productToDelete.length; i++) {
     productToDelete[i].addEventListener("click", function () {
       alert("🗑️ Voulez-vous supprimer ce produit ?");
-    }
-    )
+      productToDelete[i].closest("article").remove();
+
+      // -- Identify product to delete (by id & color)--
+      let productToDelete_Id = newProductStored[i]._id;
+      console.log(productToDelete_Id);
+      let productToDelete_Color = newProductStored[i].color;
+      console.log(productToDelete_Color);
+
+      newProductStored = newProductStored.filter(product => product._id !== productToDelete_Id || product.color !== productToDelete_Color);
+
+      // save user selection (localstorage)
+      localStorage.setItem("newProductStored", JSON.stringify(newProductStored));
+      updateTotalArticlesAfterChange();
+      updateTotalAmountAfterChange();
+      console.log(newProductStored);
+    });
   }
 }
+
+
+/*
+Manage order
+*/
+// In form: get and analyse user data entered (regEx)
+
+// firstname
+let firstName = document.getElementById("firstName");
+let firstNameRegex = /^[a-zA-Z]+(-[a-zA-Z]+)*$/ //accept name with"-", no digit and special characters
+let firstNameErrorMsg = document.getElementById("firstNameErrorMsg");
+
+firstName.addEventListener("change", function () {
+  if (!firstNameRegex.test(firstName.value)) {
+    firstNameErrorMsg.innerText = ("✋ Votre saisie contient au moins un caractère invalide. Notez que les caractères numériques et spéciaux ne sont pas supportés. Renouvelez votre saisie.");
+  } else {
+    firstNameErrorMsg.innerText = "✔️";
+  }
+});
+
+// lastname
+let lastName = document.getElementById("lastName");
+let lastNameRegex = /^[a-zA-Z_ ]+(-[a-zA-Z_ ]+)*$/ //accept "-", space, no digit and special characters
+let lastNameErrorMsg = document.getElementById("lastNameErrorMsg");
+
+lastName.addEventListener("change", function () {
+  if (!lastNameRegex.test(lastName.value)) {
+    lastNameErrorMsg.innerText = ("✋ Votre saisie contient au moins un caractère invalide. Notez que les caractères numériques et spéciaux ne sont pas supportés. Renouvelez votre saisie.");
+  } else {
+    lastNameErrorMsg.innerText = "✔️";
+  }
+});
+
+// address
+let address = document.getElementById("address");
+let addressRegex = /^[a-zA-Z0-9_ ]+(-[a-zA-Z_ ]+)*$/ //accept "-", space, digit, no special characters
+let addressErrorMsg = document.getElementById("addressErrorMsg");
+
+address.addEventListener("change", function () {
+  if (!addressRegex.test(address.value)) {
+    addressErrorMsg.innerText = ("✋ Votre saisie contient au moins un caractère invalide. Notez que les caractères spéciaux ne sont pas supportés. Renouvelez votre saisie.");
+  } else {
+    addressErrorMsg.innerText = "✔️";
+  }
+});
+
+// city
+let city = document.getElementById("city");
+let cityRegex = /^[a-zA-Z_ ]+(-[a-zA-Z_ ]+)*$/ //accept "-", space, no digit and special characters
+let cityErrorMsg = document.getElementById("cityErrorMsg");
+
+city.addEventListener("change", function () {
+  if (!cityRegex.test(city.value)) {
+    cityErrorMsg.innerText = ("✋ Votre saisie contient au moins un caractère invalide. Notez que les caractères numériques et spéciaux ne sont pas supportés. Renouvelez votre saisie.");
+  } else {
+    cityErrorMsg.innerText = "✔️";
+  }
+});
+
+// email
+let email = document.getElementById("email");
+let emailRegex = /^[a-zA-Z-_\.]+@[a-zA-Z\.]*$/ //accept "-", space, no digit and special characters
+let emailErrorMsg = document.getElementById("emailErrorMsg");
+
+email.addEventListener("change", function () {
+  if (!emailRegex.test(email.value)) {
+    emailErrorMsg.innerText = ("✋ Votre saisie contient au moins un caractère invalide. Notez que les caractères spéciaux ne sont pas supportés. Renouvelez votre saisie.");
+  } else {
+    emailErrorMsg.innerText = "✔️";
+  }
+});
