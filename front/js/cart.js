@@ -178,7 +178,7 @@ function modifyQuantity() {
           Update quantity
   */
 
-  newProductStored = JSON.parse(localStorage.productStored);
+  newProductStored = JSON.parse(localStorage.getItem("productStored"));
   console.log(newProductStored);
   for (let i = 0; i < selectQuantity.length; i++) {
     if (cartContent[i]._id == newProductStored[i]._id && cartContent[i].color == newProductStored[i].color && newQuantity < 100) {
@@ -247,73 +247,144 @@ function deleteProduct() {
   }
 }
 
+// ---------- Manage Order ----------
+
+/*     
+    Step 1: Configuring form proprieties
+*/
+
+// Get and analyse user data entered (regEx)
+validateForm();
+function validateForm() {
+  // -- firstname --
+  let firstName = document.getElementById("firstName");
+  let firstNameRegex = /^[a-zA-Z]+(-[a-zA-Z]+)*$/ //accept name with"-", no digit and special characters
+  let firstNameErrorMsg = document.getElementById("firstNameErrorMsg");
+
+  firstName.addEventListener("change", function () {
+    if (!firstNameRegex.test(firstName.value)) {
+      firstNameErrorMsg.innerText = ("✋ Votre saisie contient au moins un caractère invalide. Notez que les caractères numériques et spéciaux ne sont pas supportés. Renouvelez votre saisie.");
+      firstName.style.border = "2px solid red";
+      return false;
+    } else {
+      firstName.style.border = "2px solid green";
+      firstNameErrorMsg.innerText = "";
+      return true;
+    }
+  });
+
+  // -- lastname --
+  let lastName = document.getElementById("lastName");
+  let lastNameRegex = /^[a-zA-Z_ ]+(-[a-zA-Z_ ]+)*$/ //accept "-", space, no digit and special characters
+  let lastNameErrorMsg = document.getElementById("lastNameErrorMsg");
+
+  lastName.addEventListener("change", function () {
+    if (!lastNameRegex.test(lastName.value)) {
+      lastNameErrorMsg.innerText = ("✋ Votre saisie contient au moins un caractère invalide. Notez que les caractères numériques et spéciaux ne sont pas supportés. Renouvelez votre saisie.");
+      lastName.style.border = "2px solid red";
+    } else {
+      lastName.style.border = "2px solid green";
+      lastNameErrorMsg.innerText = "";
+    }
+  });
+
+  // -- address --
+  let address = document.getElementById("address");
+  let addressRegex = /^[a-zA-Z0-9_ ]+(-[a-zA-Z_ ]+)*$/ //accept "-", space, digit, no special characters
+  let addressErrorMsg = document.getElementById("addressErrorMsg");
+
+  address.addEventListener("change", function () {
+    if (!addressRegex.test(address.value)) {
+      addressErrorMsg.innerText = ("✋ Votre saisie contient au moins un caractère invalide. Notez que les caractères spéciaux ne sont pas supportés. Renouvelez votre saisie.");
+      address.style.border = "2px solid red";
+    } else {
+      address.style.border = "2px solid green";
+      addressErrorMsg.innerText = "";
+    }
+  });
+
+  // -- city --
+  let city = document.getElementById("city");
+  let cityRegex = /^[a-zA-Z_ ]+(-[a-zA-Z_ ]+)*$/ //accept "-", space, no digit and special characters
+  let cityErrorMsg = document.getElementById("cityErrorMsg");
+
+  city.addEventListener("change", function () {
+    if (!cityRegex.test(city.value)) {
+      cityErrorMsg.innerText = ("✋ Votre saisie contient au moins un caractère invalide. Notez que les caractères numériques et spéciaux ne sont pas supportés. Renouvelez votre saisie.");
+      city.style.border = "2px solid red";
+    } else {
+      city.style.border = "2px solid green";
+      cityErrorMsg.innerText = "";
+    }
+  });
+
+  // -- email --
+  let email = document.getElementById("email");
+  let emailRegex = /^[a-zA-Z-_\.]+@[a-zA-Z\.]*$/ //accept "-", space, no digit and special characters
+  let emailErrorMsg = document.getElementById("emailErrorMsg");
+
+  email.addEventListener("change", function () {
+    if (!emailRegex.test(email.value)) {
+      emailErrorMsg.innerText = ("✋ Votre saisie contient au moins un caractère invalide. Notez que les caractères spéciaux ne sont pas supportés. Veuillez saisir une adresse mail au bon format.");
+      email.style.border = "2px solid red";
+    } else {
+      email.style.border = "2px solid green";
+      emailErrorMsg.innerText = "";
+    }
+  });
+}
 
 /*
-Manage order
+    Step 2: Init order
 */
-// In form: get and analyse user data entered (regEx)
 
-// firstname
-let firstName = document.getElementById("firstName");
-let firstNameRegex = /^[a-zA-Z]+(-[a-zA-Z]+)*$/ //accept name with"-", no digit and special characters
-let firstNameErrorMsg = document.getElementById("firstNameErrorMsg");
+// By button "Commander" > Launch the order by making sure that order elements are valid
+initOrder();
+function initOrder() {
+  const orderButton = document.getElementById("order");
 
-firstName.addEventListener("change", function () {
-  if (!firstNameRegex.test(firstName.value)) {
-    firstNameErrorMsg.innerText = ("✋ Votre saisie contient au moins un caractère invalide. Notez que les caractères numériques et spéciaux ne sont pas supportés. Renouvelez votre saisie.");
-  } else {
-    firstNameErrorMsg.innerText = "✔️";
-  }
-});
+  orderButton.addEventListener("click", function (event) {
+    event.preventDefault();
 
-// lastname
-let lastName = document.getElementById("lastName");
-let lastNameRegex = /^[a-zA-Z_ ]+(-[a-zA-Z_ ]+)*$/ //accept "-", space, no digit and special characters
-let lastNameErrorMsg = document.getElementById("lastNameErrorMsg");
+    // -- Check user data > build contact object --
 
-lastName.addEventListener("change", function () {
-  if (!lastNameRegex.test(lastName.value)) {
-    lastNameErrorMsg.innerText = ("✋ Votre saisie contient au moins un caractère invalide. Notez que les caractères numériques et spéciaux ne sont pas supportés. Renouvelez votre saisie.");
-  } else {
-    lastNameErrorMsg.innerText = "✔️";
-  }
-});
+    isThereAValue();
+    function isThereAValue() {
+      let informationRequired = "Information requise";
 
-// address
-let address = document.getElementById("address");
-let addressRegex = /^[a-zA-Z0-9_ ]+(-[a-zA-Z_ ]+)*$/ //accept "-", space, digit, no special characters
-let addressErrorMsg = document.getElementById("addressErrorMsg");
+      if (firstName.value == "" || firstName.value == null && lastName.value == "" || lastName.value == null && address.value == "" || address.value == null && city.value == "" || city.value == null && email.value == "" || email.value == null) {
+        firstNameErrorMsg.innerText = informationRequired;
+        lastNameErrorMsg.innerText = informationRequired;
+        addressErrorMsg.innerText = informationRequired;
+        cityErrorMsg.innerText = informationRequired;
+        emailErrorMsg.innerText = informationRequired;
+      }
+    }
 
-address.addEventListener("change", function () {
-  if (!addressRegex.test(address.value)) {
-    addressErrorMsg.innerText = ("✋ Votre saisie contient au moins un caractère invalide. Notez que les caractères spéciaux ne sont pas supportés. Renouvelez votre saisie.");
-  } else {
-    addressErrorMsg.innerText = "✔️";
-  }
-});
+    const contact = {
+      "firstName": firstName.value,
+      "lastName": lastName.value,
+      "address": address.value,
+      "city": city.value,
+      "email": email.value
+    };
+    console.log(contact);
 
-// city
-let city = document.getElementById("city");
-let cityRegex = /^[a-zA-Z_ ]+(-[a-zA-Z_ ]+)*$/ //accept "-", space, no digit and special characters
-let cityErrorMsg = document.getElementById("cityErrorMsg");
 
-city.addEventListener("change", function () {
-  if (!cityRegex.test(city.value)) {
-    cityErrorMsg.innerText = ("✋ Votre saisie contient au moins un caractère invalide. Notez que les caractères numériques et spéciaux ne sont pas supportés. Renouvelez votre saisie.");
-  } else {
-    cityErrorMsg.innerText = "✔️";
-  }
-});
-
-// email
-let email = document.getElementById("email");
-let emailRegex = /^[a-zA-Z-_\.]+@[a-zA-Z\.]*$/ //accept "-", space, no digit and special characters
-let emailErrorMsg = document.getElementById("emailErrorMsg");
-
-email.addEventListener("change", function () {
-  if (!emailRegex.test(email.value)) {
-    emailErrorMsg.innerText = ("✋ Votre saisie contient au moins un caractère invalide. Notez que les caractères spéciaux ne sont pas supportés. Renouvelez votre saisie.");
-  } else {
-    emailErrorMsg.innerText = "✔️";
-  }
-});
+    // -- Check if activity in cart > create array --
+    //checkCart();
+    function checkCart() {
+      let cartStatus = JSON.parse(localStorage.getItem("newProductStored"));
+      console.log(cartStatus);
+      let infoEmptyCart = document.querySelector(".cartAndFormContainer").firstElementChild;
+      let redirection = confirm("Le panier est vide. Voulez-vous reprendre votre shopping ? Pour toute assistance, notre équipe Support est à votre écoute 😀");
+      if (cartStatus == null) {
+        infoEmptyCart.innerText = "Votre panier est vide 🙁";
+        redirection;
+        window.location.href = "index.html";
+      } else {
+        console.log("Cart contains products");
+      }
+    }
+  });
+}
