@@ -6,7 +6,8 @@ var cartContent = JSON.parse(localStorage.getItem("productStored"));
 document.body.onload = getCustomerSelection();
 
 function getCustomerSelection() {
-  if (localStorage.getItem("productStored") !== null) {
+  let infoEmptyCart = document.querySelector(".cartAndFormContainer").firstElementChild;
+  if (localStorage.getItem("productStored" || "newProductStored") !== null) {
     cartContent;
     console.log(cartContent);
 
@@ -99,11 +100,28 @@ function getCustomerSelection() {
         title.appendChild(color);
       }
     }
+    updateTotalArticles();
+    updateTotalAmount();
+    modifyQuantity();
+    deleteProduct();
+  } else {
+    infoEmptyCart.innerText = "Votre panier est vide 🙁";
+    const timeOut = setTimeout(continueShopping, 2000);
   }
-  updateTotalArticles();
-  updateTotalAmount();
-  modifyQuantity();
-  deleteProduct();
+}
+
+function continueShopping() {
+  if (localStorage.getItem("productStored" || "newProductStored") == null) {
+    console.log("Cart is empty");
+  }
+  let confirmEmptyCart = confirm("Le panier est vide. Voulez-vous reprendre votre shopping ? Pour toute assistance, notre équipe Support est à votre écoute 😀");
+  confirmEmptyCart;
+  console.log(confirmEmptyCart);
+  if (confirmEmptyCart == true) {
+    window.location.href = "index.html";
+  } else {
+    alert("Nous espérons vous revoir bientôt ! Merci pour votre visite.")
+  }
 }
 
 
@@ -250,7 +268,7 @@ function deleteProduct() {
 // ---------- Manage Order ----------
 
 /*     
-    Step 1: Configuring form proprieties
+    Step 1: Configuring form properties
 */
 
 // Get and analyse user data entered (regEx)
@@ -264,12 +282,10 @@ function validateForm() {
   firstName.addEventListener("change", function () {
     if (!firstNameRegex.test(firstName.value)) {
       firstNameErrorMsg.innerText = ("✋ Votre saisie contient au moins un caractère invalide. Notez que les caractères numériques et spéciaux ne sont pas supportés. Renouvelez votre saisie.");
-      firstName.style.border = "2px solid red";
-      return false;
+      firstName.style.border = "3px solid red";
     } else {
-      firstName.style.border = "2px solid green";
+      firstName.style.border = "3px solid green";
       firstNameErrorMsg.innerText = "";
-      return true;
     }
   });
 
@@ -281,9 +297,9 @@ function validateForm() {
   lastName.addEventListener("change", function () {
     if (!lastNameRegex.test(lastName.value)) {
       lastNameErrorMsg.innerText = ("✋ Votre saisie contient au moins un caractère invalide. Notez que les caractères numériques et spéciaux ne sont pas supportés. Renouvelez votre saisie.");
-      lastName.style.border = "2px solid red";
+      lastName.style.border = "3px solid red";
     } else {
-      lastName.style.border = "2px solid green";
+      lastName.style.border = "3px solid green";
       lastNameErrorMsg.innerText = "";
     }
   });
@@ -296,9 +312,9 @@ function validateForm() {
   address.addEventListener("change", function () {
     if (!addressRegex.test(address.value)) {
       addressErrorMsg.innerText = ("✋ Votre saisie contient au moins un caractère invalide. Notez que les caractères spéciaux ne sont pas supportés. Renouvelez votre saisie.");
-      address.style.border = "2px solid red";
+      address.style.border = "3px solid red";
     } else {
-      address.style.border = "2px solid green";
+      address.style.border = "3px solid green";
       addressErrorMsg.innerText = "";
     }
   });
@@ -311,9 +327,9 @@ function validateForm() {
   city.addEventListener("change", function () {
     if (!cityRegex.test(city.value)) {
       cityErrorMsg.innerText = ("✋ Votre saisie contient au moins un caractère invalide. Notez que les caractères numériques et spéciaux ne sont pas supportés. Renouvelez votre saisie.");
-      city.style.border = "2px solid red";
+      city.style.border = "3px solid red";
     } else {
-      city.style.border = "2px solid green";
+      city.style.border = "3px solid green";
       cityErrorMsg.innerText = "";
     }
   });
@@ -326,9 +342,9 @@ function validateForm() {
   email.addEventListener("change", function () {
     if (!emailRegex.test(email.value)) {
       emailErrorMsg.innerText = ("✋ Votre saisie contient au moins un caractère invalide. Notez que les caractères spéciaux ne sont pas supportés. Veuillez saisir une adresse mail au bon format.");
-      email.style.border = "2px solid red";
+      email.style.border = "3px solid red";
     } else {
-      email.style.border = "2px solid green";
+      email.style.border = "3px solid green";
       emailErrorMsg.innerText = "";
     }
   });
@@ -348,43 +364,55 @@ function initOrder() {
 
     // -- Check user data > build contact object --
 
-    isThereAValue();
-    function isThereAValue() {
-      let informationRequired = "Information requise";
+    let informationRequired = "⚠️ Information requise";
+    let dataIsValid =
+      !firstNameErrorMsg.innerText &&
+      !lastNameErrorMsg.innerText &&
+      !addressErrorMsg.innerText &&
+      !cityErrorMsg.innerText &&
+      !emailErrorMsg.innerText;
+    console.log(dataIsValid);
+    let borderInputFalse = "3px solid red";
+    let contact = {};
 
-      if (firstName.value == "" || firstName.value == null && lastName.value == "" || lastName.value == null && address.value == "" || address.value == null && city.value == "" || city.value == null && email.value == "" || email.value == null) {
-        firstNameErrorMsg.innerText = informationRequired;
-        lastNameErrorMsg.innerText = informationRequired;
-        addressErrorMsg.innerText = informationRequired;
-        cityErrorMsg.innerText = informationRequired;
-        emailErrorMsg.innerText = informationRequired;
-      }
+    if (!firstName.value &&
+      !lastName.value &&
+      !address.value &&
+      !city.value &&
+      !email.value) {
+      firstNameErrorMsg.innerText = informationRequired;
+      lastNameErrorMsg.innerText = informationRequired;
+      addressErrorMsg.innerText = informationRequired;
+      cityErrorMsg.innerText = informationRequired;
+      emailErrorMsg.innerText = informationRequired;
+
+      firstName.style.border = borderInputFalse;
+      lastName.style.border = borderInputFalse;
+      address.style.border = borderInputFalse;
+      city.style.border = borderInputFalse;
+      email.style.border = borderInputFalse;
     }
 
-    const contact = {
-      "firstName": firstName.value,
-      "lastName": lastName.value,
-      "address": address.value,
-      "city": city.value,
-      "email": email.value
-    };
-    console.log(contact);
+    if (firstName.value && dataIsValid &&
+      lastName.value && dataIsValid &&
+      address.value && dataIsValid &&
+      city.value && dataIsValid &&
+      email.value && dataIsValid &&
+      localStorage.getItem("newProductStored") !== null) { //return false if not correct data > can not buid contact object 
 
+      contact = {
+        "firstName": firstName.value,
+        "lastName": lastName.value,
+        "address": address.value,
+        "city": city.value,
+        "email": email.value
+      };
+      console.log(contact);
 
-    // -- Check if activity in cart > create array --
-    //checkCart();
-    function checkCart() {
-      let cartStatus = JSON.parse(localStorage.getItem("newProductStored"));
-      console.log(cartStatus);
-      let infoEmptyCart = document.querySelector(".cartAndFormContainer").firstElementChild;
-      let redirection = confirm("Le panier est vide. Voulez-vous reprendre votre shopping ? Pour toute assistance, notre équipe Support est à votre écoute 😀");
-      if (cartStatus == null) {
-        infoEmptyCart.innerText = "Votre panier est vide 🙁";
-        redirection;
-        window.location.href = "index.html";
-      } else {
-        console.log("Cart contains products");
-      }
+      // -- Activity in cart > create array --
+
+      let product_ID = JSON.parse(localStorage.getItem("newProductStored")) || [];
+      console.log(product_ID);
     }
   });
 }
