@@ -245,174 +245,214 @@ function deleteProduct() {
 
   for (let i = 0; i < productToDelete.length; i++) {
     productToDelete[i].addEventListener("click", function () {
-      alert("🗑️ Voulez-vous supprimer ce produit ?");
-      productToDelete[i].closest("article").remove();
+      let askForDelete = confirm("🗑️ Voulez-vous supprimer ce produit ?");
 
-      // -- Identify product to delete (by id & color)--
-      let productToDelete_Id = newProductStored[i]._id;
-      console.log(productToDelete_Id);
-      let productToDelete_Color = newProductStored[i].color;
-      console.log(productToDelete_Color);
+      if (askForDelete == true) {
+        productToDelete[i].closest("article").remove();
 
-      newProductStored = newProductStored.filter(product => product._id !== productToDelete_Id || product.color !== productToDelete_Color);
+        // -- Identify product to delete (by id & color)--
+        let productToDelete_Id = newProductStored[i]._id;
+        console.log(productToDelete_Id);
+        let productToDelete_Color = newProductStored[i].color;
+        console.log(productToDelete_Color);
 
-      // save user selection (localstorage)
-      localStorage.setItem("newProductStored", JSON.stringify(newProductStored));
-      updateTotalArticlesAfterChange();
-      updateTotalAmountAfterChange();
-      console.log(newProductStored);
+        newProductStored = newProductStored.filter(product => product._id !== productToDelete_Id || product.color !== productToDelete_Color);
+      }
+        // save user selection (localstorage)
+        localStorage.setItem("newProductStored", JSON.stringify(newProductStored));
+        updateTotalArticlesAfterChange();
+        updateTotalAmountAfterChange();
+        console.log(newProductStored);
     });
   }
 }
 
-// ---------- Manage Order ----------
+  // ---------- Manage Order ----------
 
-/*     
-    Step 1: Configuring form properties
-*/
+  /*     
+      Step 1: Configuring form properties
+  */
+ 
+  // Get and analyse user data entered (regEx)
+  validateForm();
+  function validateForm() {
+    // -- firstname --
+    let firstName = document.getElementById("firstName");
+    let firstNameRegex = /^[a-zA-Z]+(-[a-zA-Z]+)*$/ //accept name with"-", no digit and special characters
+    let firstNameErrorMsg = document.getElementById("firstNameErrorMsg");
 
-// Get and analyse user data entered (regEx)
-validateForm();
-function validateForm() {
-  // -- firstname --
-  let firstName = document.getElementById("firstName");
-  let firstNameRegex = /^[a-zA-Z]+(-[a-zA-Z]+)*$/ //accept name with"-", no digit and special characters
-  let firstNameErrorMsg = document.getElementById("firstNameErrorMsg");
+    firstName.addEventListener("change", function () {
+      if (!firstNameRegex.test(firstName.value)) {
+        firstNameErrorMsg.innerText = ("✋ Votre saisie contient au moins un caractère invalide. Notez que les caractères numériques et spéciaux ne sont pas supportés. Renouvelez votre saisie.");
+        firstName.style.border = "3px solid red";
+      } else {
+        firstName.style.border = "3px solid green";
+        firstNameErrorMsg.innerText = "";
+      }
+    });
 
-  firstName.addEventListener("change", function () {
-    if (!firstNameRegex.test(firstName.value)) {
-      firstNameErrorMsg.innerText = ("✋ Votre saisie contient au moins un caractère invalide. Notez que les caractères numériques et spéciaux ne sont pas supportés. Renouvelez votre saisie.");
-      firstName.style.border = "3px solid red";
-    } else {
-      firstName.style.border = "3px solid green";
-      firstNameErrorMsg.innerText = "";
-    }
-  });
+    // -- lastname --
+    let lastName = document.getElementById("lastName");
+    let lastNameRegex = /^[a-zA-Z_ ]+(-[a-zA-Z_ ]+)*$/ //accept "-", space, no digit and special characters
+    let lastNameErrorMsg = document.getElementById("lastNameErrorMsg");
 
-  // -- lastname --
-  let lastName = document.getElementById("lastName");
-  let lastNameRegex = /^[a-zA-Z_ ]+(-[a-zA-Z_ ]+)*$/ //accept "-", space, no digit and special characters
-  let lastNameErrorMsg = document.getElementById("lastNameErrorMsg");
+    lastName.addEventListener("change", function () {
+      if (!lastNameRegex.test(lastName.value)) {
+        lastNameErrorMsg.innerText = ("✋ Votre saisie contient au moins un caractère invalide. Notez que les caractères numériques et spéciaux ne sont pas supportés. Renouvelez votre saisie.");
+        lastName.style.border = "3px solid red";
+      } else {
+        lastName.style.border = "3px solid green";
+        lastNameErrorMsg.innerText = "";
+      }
+    });
 
-  lastName.addEventListener("change", function () {
-    if (!lastNameRegex.test(lastName.value)) {
-      lastNameErrorMsg.innerText = ("✋ Votre saisie contient au moins un caractère invalide. Notez que les caractères numériques et spéciaux ne sont pas supportés. Renouvelez votre saisie.");
-      lastName.style.border = "3px solid red";
-    } else {
-      lastName.style.border = "3px solid green";
-      lastNameErrorMsg.innerText = "";
-    }
-  });
+    // -- address --
+    let address = document.getElementById("address");
+    let addressRegex = /^[a-zA-Z0-9_ ]+(-[a-zA-Z_ ]+)*$/ //accept "-", space, digit, no special characters
+    let addressErrorMsg = document.getElementById("addressErrorMsg");
 
-  // -- address --
-  let address = document.getElementById("address");
-  let addressRegex = /^[a-zA-Z0-9_ ]+(-[a-zA-Z_ ]+)*$/ //accept "-", space, digit, no special characters
-  let addressErrorMsg = document.getElementById("addressErrorMsg");
+    address.addEventListener("change", function () {
+      if (!addressRegex.test(address.value)) {
+        addressErrorMsg.innerText = ("✋ Votre saisie contient au moins un caractère invalide. Notez que les caractères spéciaux ne sont pas supportés. Renouvelez votre saisie.");
+        address.style.border = "3px solid red";
+      } else {
+        address.style.border = "3px solid green";
+        addressErrorMsg.innerText = "";
+      }
+    });
 
-  address.addEventListener("change", function () {
-    if (!addressRegex.test(address.value)) {
-      addressErrorMsg.innerText = ("✋ Votre saisie contient au moins un caractère invalide. Notez que les caractères spéciaux ne sont pas supportés. Renouvelez votre saisie.");
-      address.style.border = "3px solid red";
-    } else {
-      address.style.border = "3px solid green";
-      addressErrorMsg.innerText = "";
-    }
-  });
+    // -- city --
+    let city = document.getElementById("city");
+    let cityRegex = /^[a-zA-Z_ ]+(-[a-zA-Z_ ]+)*$/ //accept "-", space, no digit and special characters
+    let cityErrorMsg = document.getElementById("cityErrorMsg");
 
-  // -- city --
-  let city = document.getElementById("city");
-  let cityRegex = /^[a-zA-Z_ ]+(-[a-zA-Z_ ]+)*$/ //accept "-", space, no digit and special characters
-  let cityErrorMsg = document.getElementById("cityErrorMsg");
+    city.addEventListener("change", function () {
+      if (!cityRegex.test(city.value)) {
+        cityErrorMsg.innerText = ("✋ Votre saisie contient au moins un caractère invalide. Notez que les caractères numériques et spéciaux ne sont pas supportés. Renouvelez votre saisie.");
+        city.style.border = "3px solid red";
+      } else {
+        city.style.border = "3px solid green";
+        cityErrorMsg.innerText = "";
+      }
+    });
 
-  city.addEventListener("change", function () {
-    if (!cityRegex.test(city.value)) {
-      cityErrorMsg.innerText = ("✋ Votre saisie contient au moins un caractère invalide. Notez que les caractères numériques et spéciaux ne sont pas supportés. Renouvelez votre saisie.");
-      city.style.border = "3px solid red";
-    } else {
-      city.style.border = "3px solid green";
-      cityErrorMsg.innerText = "";
-    }
-  });
+    // -- email --
+    let email = document.getElementById("email");
+    let emailRegex = /^[a-zA-Z-_\.]+@[a-zA-Z\.]*$/ //accept "-", space, no digit and special characters
+    let emailErrorMsg = document.getElementById("emailErrorMsg");
 
-  // -- email --
-  let email = document.getElementById("email");
-  let emailRegex = /^[a-zA-Z-_\.]+@[a-zA-Z\.]*$/ //accept "-", space, no digit and special characters
-  let emailErrorMsg = document.getElementById("emailErrorMsg");
+    email.addEventListener("change", function () {
+      if (!emailRegex.test(email.value)) {
+        emailErrorMsg.innerText = ("✋ Votre saisie contient au moins un caractère invalide. Notez que les caractères spéciaux ne sont pas supportés. Veuillez saisir une adresse mail au bon format.");
+        email.style.border = "3px solid red";
+      } else {
+        email.style.border = "3px solid green";
+        emailErrorMsg.innerText = "";
+      }
+    });
+  }
 
-  email.addEventListener("change", function () {
-    if (!emailRegex.test(email.value)) {
-      emailErrorMsg.innerText = ("✋ Votre saisie contient au moins un caractère invalide. Notez que les caractères spéciaux ne sont pas supportés. Veuillez saisir une adresse mail au bon format.");
-      email.style.border = "3px solid red";
-    } else {
-      email.style.border = "3px solid green";
-      emailErrorMsg.innerText = "";
-    }
-  });
-}
+  /*
+      Step 2: Init order
+  */
 
-/*
-    Step 2: Init order
-*/
+  // By button "Commander" > Launch the order by making sure that order elements are valid
+  initOrder();
+  function initOrder() {
+    const orderButton = document.getElementById("order");
 
-// By button "Commander" > Launch the order by making sure that order elements are valid
-initOrder();
-function initOrder() {
-  const orderButton = document.getElementById("order");
+    orderButton.addEventListener("click", function (event) {
+      event.preventDefault();
 
-  orderButton.addEventListener("click", function (event) {
-    event.preventDefault();
+      // -- Check user data > build contact object --
 
-    // -- Check user data > build contact object --
+      let informationRequired = "⚠️ Information requise";
+      let dataIsValid =
+        !firstNameErrorMsg.innerText &&
+        !lastNameErrorMsg.innerText &&
+        !addressErrorMsg.innerText &&
+        !cityErrorMsg.innerText &&
+        !emailErrorMsg.innerText;
+      console.log(dataIsValid);
+      let borderInputFalse = "3px solid red";
+      let contact = {};
 
-    let informationRequired = "⚠️ Information requise";
-    let dataIsValid =
-      !firstNameErrorMsg.innerText &&
-      !lastNameErrorMsg.innerText &&
-      !addressErrorMsg.innerText &&
-      !cityErrorMsg.innerText &&
-      !emailErrorMsg.innerText;
-    console.log(dataIsValid);
-    let borderInputFalse = "3px solid red";
-    let contact = {};
+      if (!firstName.value &&
+        !lastName.value &&
+        !address.value &&
+        !city.value &&
+        !email.value) {
+        firstNameErrorMsg.innerText = informationRequired;
+        lastNameErrorMsg.innerText = informationRequired;
+        addressErrorMsg.innerText = informationRequired;
+        cityErrorMsg.innerText = informationRequired;
+        emailErrorMsg.innerText = informationRequired;
 
-    if (!firstName.value &&
-      !lastName.value &&
-      !address.value &&
-      !city.value &&
-      !email.value) {
-      firstNameErrorMsg.innerText = informationRequired;
-      lastNameErrorMsg.innerText = informationRequired;
-      addressErrorMsg.innerText = informationRequired;
-      cityErrorMsg.innerText = informationRequired;
-      emailErrorMsg.innerText = informationRequired;
+        firstName.style.border = borderInputFalse;
+        lastName.style.border = borderInputFalse;
+        address.style.border = borderInputFalse;
+        city.style.border = borderInputFalse;
+        email.style.border = borderInputFalse;
+      }
 
-      firstName.style.border = borderInputFalse;
-      lastName.style.border = borderInputFalse;
-      address.style.border = borderInputFalse;
-      city.style.border = borderInputFalse;
-      email.style.border = borderInputFalse;
-    }
+      if (firstName.value && dataIsValid &&
+        lastName.value && dataIsValid &&
+        address.value && dataIsValid &&
+        city.value && dataIsValid &&
+        email.value && dataIsValid &&
+        localStorage.getItem("newProductStored") !== null) { //return false if not correct data > can not build contact object 
 
-    if (firstName.value && dataIsValid &&
-      lastName.value && dataIsValid &&
-      address.value && dataIsValid &&
-      city.value && dataIsValid &&
-      email.value && dataIsValid &&
-      localStorage.getItem("newProductStored") !== null) { //return false if not correct data > can not buid contact object 
+        contact = {
+          "firstName": firstName.value,
+          "lastName": lastName.value,
+          "address": address.value,
+          "city": city.value,
+          "email": email.value
+        };
+        console.log(contact);
 
-      contact = {
-        "firstName": firstName.value,
-        "lastName": lastName.value,
-        "address": address.value,
-        "city": city.value,
-        "email": email.value
-      };
-      console.log(contact);
+        // -- Activity in cart > create array which contain product(s) ID --
 
-      // -- Activity in cart > create array --
+        JSON.parse(localStorage.getItem("newProductStored"));
 
-      let product_ID = JSON.parse(localStorage.getItem("newProductStored")) || [];
-      console.log(product_ID);
-    }
-  });
-}
+        for (let i = 0; i < newProductStored.length; i++) {
+          products = [newProductStored[i]._id];
+        }
+        console.log(products);
+
+        /*
+            Step 3: Get order ID
+        */
+
+        // API: POST request > get orderId
+        fetch("http://localhost:3000/api/products/order", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ contact, products })
+        })
+          .then(function (response) {
+            return response.json()
+          })
+          .then(function (dataOrder) {
+            console.log(dataOrder); //status 201 Created :) orderId generated!  
+            orderId = dataOrder.orderId;
+            console.log(orderId);
+
+            //localStorage.clear();
+            confirmOrder();
+
+          })
+      }
+    });
+  }
+
+  /*
+      Step 4: Redirection
+  */
+  // Redirect user to Confirmation page (indicate orderId in url)
+
+  function confirmOrder() {
+    location.href = `confirmation.html?id=${orderId}`;
+  }

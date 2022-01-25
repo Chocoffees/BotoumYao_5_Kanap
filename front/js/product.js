@@ -85,7 +85,8 @@ function addProductToCart() {
         "price": productPrice
     };
     console.log(productAdded);
-
+    alert("✔️ Produit ajouté avec succès !");
+    
     // --- Storage -> Allow access to cart ---
 
     let productStored = JSON.parse(localStorage.getItem("productStored")) || [];
