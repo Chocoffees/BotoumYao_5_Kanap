@@ -6,7 +6,7 @@ var cartContent = JSON.parse(localStorage.getItem("productStored"));
 document.body.onload = getCustomerSelection();
 
 function getCustomerSelection() {
-  let infoEmptyCart = document.querySelector(".cartAndFormContainer").firstElementChild;
+
   if (localStorage.getItem("productStored" || "newProductStored") !== null) {
     cartContent;
     console.log(cartContent);
@@ -64,7 +64,7 @@ function getCustomerSelection() {
       divSettings.appendChild(setQuantity);
 
       let quantity = document.createElement("p");
-      quantity.innerText = "Qté:" + " ";
+      quantity.innerText = 'Qté:' + " ";
       setQuantity.appendChild(quantity);
 
       let input = document.createElement("input");
@@ -83,7 +83,7 @@ function getCustomerSelection() {
 
       let deleteButton = document.createElement("p");
       deleteButton.className = "deleteItem";
-      deleteButton.innerText = "Supprimer";
+      deleteButton.innerText = 'Supprimer';
       setDelete.appendChild(deleteButton);
 
       /* 
@@ -95,7 +95,7 @@ function getCustomerSelection() {
       console.log(productWithSameId);
       if (productWithSameId !== undefined) {
         let color = document.createElement("p");
-        color.innerText = "Couleur :" + " " + productWithSameId.color;
+        color.innerText = 'Couleur :' + " " + productWithSameId.color;
         color.style.fontSize = "medium";
         title.appendChild(color);
       }
@@ -104,23 +104,6 @@ function getCustomerSelection() {
     updateTotalAmount();
     modifyQuantity();
     deleteProduct();
-  } else {
-    infoEmptyCart.innerText = "Votre panier est vide 🙁";
-    const timeOut = setTimeout(continueShopping, 2000);
-  }
-}
-
-function continueShopping() {
-  if (localStorage.getItem("productStored" || "newProductStored") == null) {
-    console.log("Cart is empty");
-  }
-  let confirmEmptyCart = confirm("Le panier est vide. Voulez-vous reprendre votre shopping ? Pour toute assistance, notre équipe Support est à votre écoute 😀");
-  confirmEmptyCart;
-  console.log(confirmEmptyCart);
-  if (confirmEmptyCart == true) {
-    window.location.href = "index.html";
-  } else {
-    alert("Nous espérons vous revoir bientôt ! Merci pour votre visite.")
   }
 }
 
@@ -258,92 +241,97 @@ function deleteProduct() {
 
         newProductStored = newProductStored.filter(product => product._id !== productToDelete_Id || product.color !== productToDelete_Color);
       }
-        // save user selection (localstorage)
-        localStorage.setItem("newProductStored", JSON.stringify(newProductStored));
-        updateTotalArticlesAfterChange();
-        updateTotalAmountAfterChange();
-        console.log(newProductStored);
+      // save user selection (localstorage)
+      localStorage.setItem("newProductStored", JSON.stringify(newProductStored));
+      updateTotalArticlesAfterChange();
+      updateTotalAmountAfterChange();
+      console.log(newProductStored);
     });
   }
 }
 
-  // ---------- Manage Order ----------
+// ---------- Manage Order ----------
 
-  /*     
-      Step 1: Configuring form properties
-  */
- 
-  // Get and analyse user data entered (regEx)
-  validateForm();
-  function validateForm() {
-    // -- firstname --
-    let firstName = document.getElementById("firstName");
-    let firstNameRegex = /^[a-zA-Z]+(-[a-zA-Z]+)*$/ //accept name with"-", no digit and special characters
-    let firstNameErrorMsg = document.getElementById("firstNameErrorMsg");
+/*     
+    Step 1: Configuring form properties
+*/
 
+// Get and analyse user data entered (regEx)
+validateForm();
+function validateForm() {
+  // -- firstname --
+  let firstName = document.getElementById("firstName");
+  let firstNameRegex = /^[a-zA-Z]+(-[a-zA-Z]+)*$/ //accept name with"-", no digit and special characters
+  let firstNameErrorMsg = document.getElementById("firstNameErrorMsg");
+  
+  if (firstName) { //check that firstName is not null before event
     firstName.addEventListener("change", function () {
       if (!firstNameRegex.test(firstName.value)) {
-        firstNameErrorMsg.innerText = ("✋ Votre saisie contient au moins un caractère invalide. Notez que les caractères numériques et spéciaux ne sont pas supportés. Renouvelez votre saisie.");
+        firstNameErrorMsg.innerText = `✋ Votre saisie contient au moins un caractère invalide. Notez que les caractères numériques et spéciaux ne sont pas supportés. Renouvelez votre saisie.`;
         firstName.style.border = "3px solid red";
       } else {
         firstName.style.border = "3px solid green";
         firstNameErrorMsg.innerText = "";
       }
     });
-
-    // -- lastname --
-    let lastName = document.getElementById("lastName");
-    let lastNameRegex = /^[a-zA-Z_ ]+(-[a-zA-Z_ ]+)*$/ //accept "-", space, no digit and special characters
-    let lastNameErrorMsg = document.getElementById("lastNameErrorMsg");
-
+  }
+  // -- lastname --
+  let lastName = document.getElementById("lastName");
+  let lastNameRegex = /^[a-zA-Z_ ]+(-[a-zA-Z_ ]+)*$/ //accept "-", space, no digit and special characters
+  let lastNameErrorMsg = document.getElementById("lastNameErrorMsg");
+  
+  if (lastName) { //check that lastName is not null before event
     lastName.addEventListener("change", function () {
       if (!lastNameRegex.test(lastName.value)) {
-        lastNameErrorMsg.innerText = ("✋ Votre saisie contient au moins un caractère invalide. Notez que les caractères numériques et spéciaux ne sont pas supportés. Renouvelez votre saisie.");
+        lastNameErrorMsg.innerText = `✋ Votre saisie contient au moins un caractère invalide. Notez que les caractères numériques et spéciaux ne sont pas supportés. Renouvelez votre saisie.`;
         lastName.style.border = "3px solid red";
       } else {
         lastName.style.border = "3px solid green";
         lastNameErrorMsg.innerText = "";
       }
     });
-
-    // -- address --
-    let address = document.getElementById("address");
-    let addressRegex = /^[a-zA-Z0-9_ ]+(-[a-zA-Z_ ]+)*$/ //accept "-", space, digit, no special characters
-    let addressErrorMsg = document.getElementById("addressErrorMsg");
-
+  }
+  // -- address --
+  let address = document.getElementById("address");
+  let addressRegex = /^[a-zA-Z0-9_ ]+(-[a-zA-Z_ ]+)*$/ //accept "-", space, digit, no special characters
+  let addressErrorMsg = document.getElementById("addressErrorMsg");
+  
+  if (address) { //check that address is not null before event
     address.addEventListener("change", function () {
       if (!addressRegex.test(address.value)) {
-        addressErrorMsg.innerText = ("✋ Votre saisie contient au moins un caractère invalide. Notez que les caractères spéciaux ne sont pas supportés. Renouvelez votre saisie.");
+        addressErrorMsg.innerText = `✋ Votre saisie contient au moins un caractère invalide. Notez que les caractères spéciaux ne sont pas supportés. Renouvelez votre saisie.`;
         address.style.border = "3px solid red";
       } else {
         address.style.border = "3px solid green";
         addressErrorMsg.innerText = "";
       }
     });
-
-    // -- city --
-    let city = document.getElementById("city");
-    let cityRegex = /^[a-zA-Z_ ]+(-[a-zA-Z_ ]+)*$/ //accept "-", space, no digit and special characters
-    let cityErrorMsg = document.getElementById("cityErrorMsg");
-
+  }
+  // -- city --
+  let city = document.getElementById("city");
+  let cityRegex = /^[a-zA-Z_ ]+(-[a-zA-Z_ ]+)*$/ //accept "-", space, no digit and special characters
+  let cityErrorMsg = document.getElementById("cityErrorMsg");
+  
+  if (city) { //check that city is not null before event
     city.addEventListener("change", function () {
       if (!cityRegex.test(city.value)) {
-        cityErrorMsg.innerText = ("✋ Votre saisie contient au moins un caractère invalide. Notez que les caractères numériques et spéciaux ne sont pas supportés. Renouvelez votre saisie.");
+        cityErrorMsg.innerText = `✋ Votre saisie contient au moins un caractère invalide. Notez que les caractères numériques et spéciaux ne sont pas supportés. Renouvelez votre saisie.`;
         city.style.border = "3px solid red";
       } else {
         city.style.border = "3px solid green";
         cityErrorMsg.innerText = "";
       }
     });
-
-    // -- email --
-    let email = document.getElementById("email");
-    let emailRegex = /^[a-zA-Z-_\.]+@[a-zA-Z\.]*$/ //accept "-", space, no digit and special characters
-    let emailErrorMsg = document.getElementById("emailErrorMsg");
-
+  }
+  // -- email --
+  let email = document.getElementById("email");
+  let emailRegex = /^[a-zA-Z-_\.]+@[a-zA-Z\.]*$/ //accept "-", space, no digit and special characters
+  let emailErrorMsg = document.getElementById("emailErrorMsg");
+  
+  if (email) { //check that email is not null before event
     email.addEventListener("change", function () {
       if (!emailRegex.test(email.value)) {
-        emailErrorMsg.innerText = ("✋ Votre saisie contient au moins un caractère invalide. Notez que les caractères spéciaux ne sont pas supportés. Veuillez saisir une adresse mail au bon format.");
+        emailErrorMsg.innerText = `✋ Votre saisie contient au moins un caractère invalide. Notez que les caractères spéciaux ne sont pas supportés. Veuillez saisir une adresse mail au bon format.`;
         email.style.border = "3px solid red";
       } else {
         email.style.border = "3px solid green";
@@ -351,16 +339,17 @@ function deleteProduct() {
       }
     });
   }
+}
 
-  /*
-      Step 2: Init order
-  */
+/*
+    Step 2: Init order
+*/
 
-  // By button "Commander" > Launch the order by making sure that order elements are valid
-  initOrder();
-  function initOrder() {
-    const orderButton = document.getElementById("order");
-
+// By button "Commander" > Launch the order by making sure that order elements are valid
+initOrder();
+function initOrder() {
+  const orderButton = document.getElementById("order");
+  if (orderButton) {
     orderButton.addEventListener("click", function (event) {
       event.preventDefault();
 
@@ -414,7 +403,6 @@ function deleteProduct() {
         // -- Activity in cart > create array which contain product(s) ID --
 
         JSON.parse(localStorage.getItem("newProductStored"));
-
         for (let i = 0; i < newProductStored.length; i++) {
           products = [newProductStored[i]._id];
         }
@@ -440,19 +428,19 @@ function deleteProduct() {
             orderId = dataOrder.orderId;
             console.log(orderId);
 
-            //localStorage.clear();
+            localStorage.clear();
             confirmOrder();
 
           })
       }
     });
   }
+}
+/*
+    Step 4: Redirection
+*/
+// Redirect user to Confirmation page (indicate orderId in url)
 
-  /*
-      Step 4: Redirection
-  */
-  // Redirect user to Confirmation page (indicate orderId in url)
-
-  function confirmOrder() {
-    location.href = `confirmation.html?id=${orderId}`;
-  }
+function confirmOrder() {
+  location.href = `confirmation.html?id=${orderId}`;
+}
