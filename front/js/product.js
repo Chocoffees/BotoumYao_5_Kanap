@@ -85,23 +85,31 @@ function addProductToCart() {
         "price": productPrice
     };
     console.log(productAdded);
-    alert("✔️ Produit ajouté avec succès !");
-    
-    // --- Storage -> Allow access to cart ---
 
-    let productStored = JSON.parse(localStorage.getItem("productStored")) || [];
-
-    // check duplicate product(s): same id & color (cart) -> adjust quantity
-    let duplicateProduct = productStored.find(product => (product._id === ID && product.color === document.getElementById("colors").value));
-
-    if (duplicateProduct !== undefined) {
-        duplicateProduct.quantity++;
+    let inputQuantity = document.getElementById("quantity").value;
+    console.log(inputQuantity);
+    if (inputQuantity == 0 || inputQuantity == "") {
+        document.getElementById("quantity").style.border = "3px solid red";
+        alert("ℹ️ Cher Client, indiquez la quantité de produit souhaitée et cliquez de nouveau sur 'Ajouter au panier'.");
     } else {
-        productStored.push(productAdded);
+        document.getElementById("quantity").style.border = "3px solid green";
+        alert("✔️ Produit ajouté avec succès !");
+
+        // --- Storage -> Allow access to cart ---
+
+        let productStored = JSON.parse(localStorage.getItem("productStored")) || [];
+
+        // check duplicate product(s): same id & color (cart) -> adjust quantity
+        let duplicateProduct = productStored.find(product => (product._id === ID && product.color === document.getElementById("colors").value));
+
+        if (duplicateProduct !== undefined) {
+            duplicateProduct.quantity++;
+        } else {
+            productStored.push(productAdded);
+        }
+
+        // save user selection
+        localStorage.setItem("productStored", JSON.stringify(productStored));
+        console.log(productStored);
     }
-
-    // save user selection
-    localStorage.setItem("productStored", JSON.stringify(productStored));
-    console.log(productStored);
-
 }
